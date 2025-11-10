@@ -19,23 +19,46 @@ import os
 import mysql.connector
 
 def obtener_conexion():
-    host = os.environ.get("DB_HOST", "127.0.0.1")      # host público de Railway (NO mysql.railway.internal)
-    user = os.environ.get("DB_USER", "root")
-    password = os.environ.get("DB_PASS", "")
-    database = os.environ.get("DB_NAME", "empresa")
-    port = int(os.environ.get("DB_PORT", "3306"))
+    host = os.getenv("DB_HOST", "127.0.0.1")
+    port = int(os.getenv("DB_PORT", "3306"))
+    user = os.getenv("DB_USER", "root")
+    password = os.getenv("DB_PASS", "")
+    database = os.getenv("DB_NAME", "")
 
-    return mysql.connector.connect(
-        host=host,
-        user=user,
-        password=password,
-        database=database,
-        port=port,
-        connection_timeout=10,
-    )
+    try:
+        conn = mysql.connector.connect(
+            host=host,
+            port=port,
+            user=user,
+            password=password,
+            database=database,
+            ssl_disabled=True,
+            connection_timeout=8,
+        )
+        return conn
+    except mysql.connector.Error as e:
+        print(f"db error ❌: {e}, host={host}, port={port}, user={user}, db={database}")
+        raise
 
 app = Flask(__name__, template_folder="templates", static_folder="static")
 app.secret_key = "clave_secreta_segura"
+
+@app.route("/health")
+def health():
+    return "ok"
+
+@app.route("/dbtest")
+def dbtest():
+    try:
+        conn = obtener_conexion()
+        cur = conn.cursor()
+        cur.execute("SELECT 1")
+        cur.fetchone()
+        cur.close()
+        conn.close()
+        return "DB OK ✅"
+    except Exception as e:
+        return f"DB FAIL ❌: {e}", 500
 
 # ---------------------- VALIDACIONES ----------------------
 def validar_correo(correo: str) -> bool:
