@@ -16,13 +16,20 @@ from reportlab.lib.units import cm
 from reportlab.pdfgen import canvas
 
 import os
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+import mysql.connector
+from urllib.parse import urlparse
 
-app = Flask(
-    __name__,
-    template_folder=os.path.join(BASE_DIR, '..', 'templates'),
-    static_folder=os.path.join(BASE_DIR, '..', 'static')
-)
+def obtener_conexion():
+    url = urlparse(os.getenv("DATABASE_URL"))
+
+    return mysql.connector.connect(
+        host=url.hostname,
+        port=url.port,
+        user=url.username,
+        password=url.password,
+        database=url.path[1:],  # quita la primera barra '/'
+        autocommit=True
+    )
 
 app = Flask(__name__, template_folder="templates", static_folder="static")
 app.secret_key = "clave_secreta_segura"
