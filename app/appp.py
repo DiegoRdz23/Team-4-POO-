@@ -19,26 +19,41 @@ app = Flask(__name__, template_folder="templates", static_folder="static")
 app.secret_key = "clave_secreta_segura" 
 
 def obtener_conexion():
-    host = os.getenv("DB_HOST", "127.0.0.1")
-    port = int(os.getenv("DB_PORT", "3306"))
-    user = os.getenv("DB_USER", "root")
-    password = os.getenv("DB_PASS", "")
-    database = os.getenv("DB_NAME", "")
+    import socket
+
+    host_env = os.getenv("DB_HOST", "127.0.0.1").strip()
+    port_env = os.getenv("DB_PORT", "3306").strip()
+    user = os.getenv("DB_USER", "root").strip()
+    password = os.getenv("DB_PASS", "").strip()
+    database = os.getenv("DB_NAME", "").strip()
+
+    try:
+        port = int(port_env)
+    except:
+        port = 3306
+
+    try:
+        resolved_ip = socket.gethostbyname(host_env)
+    except Exception as e:
+        resolved_ip = host_env  
+
+    print(f"[DB] env host={host_env} -> resolved_ip={resolved_ip} port={port} user={user} db={database}")
 
     try:
         conn = mysql.connector.connect(
-            host=host,
+            host=resolved_ip,         
             port=port,
             user=user,
             password=password,
             database=database,
             ssl_disabled=True,
             connection_timeout=8,
+            use_pure=True,
         )
-        print(f"✅ Conexión establecida con {host}:{port}, DB={database}")
+        print(f"✅ Conexión establecida con {resolved_ip}:{port}, DB={database}")
         return conn
     except mysql.connector.Error as e:
-        print(f"❌ db error: {e}, host={host}, port={port}, user={user}, db={database}")
+        print(f"❌ db error: {e}, intentado={resolved_ip}:{port} (env host={host_env}) user={user} db={database}")
         raise
 
 @app.route("/health")
@@ -49,10 +64,18 @@ def health():
 def dbtest():
     try:
         conn = obtener_conexion()
-        conn.close()
-        return "DB OK ✅"
+        cur = conn.cursor()
+        cur.execute("SELECT DATABASE(), @@port")
+        db, srvport = cur.fetchone()
+        cur.close(); conn.close()
+        return f"DB OK ✅ (DB={db}, @@port={srvport})"
     except Exception as e:
-        return f"DB FAIL ❌: {e}", 500
+        # Además devuelve lo que ve en env para comparar
+        return (
+            "DB FAIL ❌: "
+            + str(e)
+            + f" | ENV host={os.getenv('DB_HOST')} port={os.getenv('DB_PORT')} user={os.getenv('DB_USER')} db={os.getenv('DB_NAME')}"
+        ), 500
 
 @app.route("/debug_vars")
 def debug_vars():
