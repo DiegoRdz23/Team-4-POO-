@@ -23,11 +23,11 @@ def obtener_conexion():
     import socket, os
     import mysql.connector
 
-    host_env = os.getenv("DB_HOST", "127.0.0.1").strip()
-    port_env = os.getenv("DB_PORT", "3306").strip()
-    user = os.getenv("DB_USER", "root").strip()
-    password = os.getenv("DB_PASS", "").strip()
-    database = os.getenv("DB_NAME", "").strip()
+    host_env = os.getenv("MYSQLHOST", os.getenv("DB_HOST", "127.0.0.1")).strip()
+    port_env = os.getenv("MYSQLPORT", os.getenv("DB_PORT", "3306")).strip()
+    user = os.getenv("MYSQLUSER", os.getenv("DB_USER", "root")).strip()
+    password = os.getenv("MYSQLPASSWORD", os.getenv("DB_PASS", "")).strip()
+    database = os.getenv("MYSQLDATABASE", os.getenv("DB_NAME", "")).strip()
 
     try:
         port = int(port_env)
@@ -48,7 +48,7 @@ def obtener_conexion():
             user=user,
             password=password,
             database=database,
-            ssl_disabled=True,      # si falla luego, probamos quitando esta línea
+            ssl_disabled=True,
             connection_timeout=8,
             use_pure=True,
         )
