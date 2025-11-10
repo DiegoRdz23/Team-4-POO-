@@ -19,8 +19,8 @@ import os
 import mysql.connector
 
 def obtener_conexion():
-    host = os.getenv("DB_HOST", "switchyard.proxy.rlwy.net")
-    port = int(os.getenv("DB_PORT", "21505"))
+    host = os.getenv("DB_HOST", "127.0.0.1")
+    port = int(os.getenv("DB_PORT", "3306"))
     user = os.getenv("DB_USER", "root")
     password = os.getenv("DB_PASS", "")
     database = os.getenv("DB_NAME", "")
@@ -35,9 +35,10 @@ def obtener_conexion():
             ssl_disabled=True,
             connection_timeout=8,
         )
+        print(f"✅ Conexión establecida con {host}:{port}, DB={database}")
         return conn
     except mysql.connector.Error as e:
-        print(f"db error ❌: {e}, host={host}, port={port}, user={user}, db={database}")
+        print(f"❌ db error: {e}, host={host}, port={port}, user={user}, db={database}")
         raise
 
 app = Flask(__name__, template_folder="templates", static_folder="static")
