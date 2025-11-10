@@ -16,18 +16,17 @@ from reportlab.lib.units import cm
 from reportlab.pdfgen import canvas
 
 import os
-import mysql.connector
 from urllib.parse import urlparse
+import mysql.connector
 
 def obtener_conexion():
     url = urlparse(os.getenv("DATABASE_URL"))
-
     return mysql.connector.connect(
         host=url.hostname,
         port=url.port,
         user=url.username,
         password=url.password,
-        database=url.path[1:],  # quita la primera barra '/'
+        database=url.path[1:],  
         autocommit=True
     )
 
