@@ -1141,6 +1141,19 @@ def reporte_catalogo():
     buffer.seek(0)
     return send_file(buffer, as_attachment=True, download_name="reporte_catalogo.pdf", mimetype="application/pdf")
 
+@app.route("/dbping")
+def dbping():
+    try:
+        conn = obtener_conexion()
+        cur = conn.cursor()
+        cur.execute("SELECT NOW();")
+        resultado = cur.fetchone()
+        cur.close()
+        conn.close()
+        return f"db ok ✅ conexión exitosa ({resultado})", 200
+    except Exception as e:
+        return f"db error ❌: {e}", 500
+
 # ---------------------- EJECUCIÓN ----------------------
 if __name__ == "__main__":
     from waitress import serve
