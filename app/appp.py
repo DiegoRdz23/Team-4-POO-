@@ -19,8 +19,8 @@ import os
 import mysql.connector
 
 def obtener_conexion():
-    host = os.getenv("DB_HOST", "127.0.0.1")
-    port = int(os.getenv("DB_PORT", "3306"))
+    host = os.getenv("DB_HOST", "switchyard.proxy.rlwy.net")
+    port = int(os.getenv("DB_PORT", "21505"))
     user = os.getenv("DB_USER", "root")
     password = os.getenv("DB_PASS", "")
     database = os.getenv("DB_NAME", "")
