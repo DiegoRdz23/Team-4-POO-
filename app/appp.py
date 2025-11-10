@@ -1,11 +1,11 @@
-# -*- coding: utf-8 -*-
+# --- imports ---
+import os
 import re
 from datetime import datetime
 from io import BytesIO
 
-import bcrypt
 import mysql.connector
-from flask import Flask, request, render_template, redirect, url_for, session, send_file
+from flask import Flask, request, render_template, redirect, url_for, session, send_file, jsonify
 
 # ReportLab (para PDFs)
 from reportlab.lib import colors
@@ -15,8 +15,8 @@ from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, 
 from reportlab.lib.units import cm
 from reportlab.pdfgen import canvas
 
-import os
-import mysql.connector
+app = Flask(__name__, template_folder="templates", static_folder="static")
+app.secret_key = "clave_secreta_segura" 
 
 def obtener_conexion():
     host = os.getenv("DB_HOST", "127.0.0.1")
@@ -41,20 +41,6 @@ def obtener_conexion():
         print(f"❌ db error: {e}, host={host}, port={port}, user={user}, db={database}")
         raise
 
-import os
-@app.route("/debug_vars")
-def debug_vars():
-    return {
-        "DB_HOST": os.getenv("DB_HOST"),
-        "DB_PORT": os.getenv("DB_PORT"),
-        "DB_USER": os.getenv("DB_USER"),
-        "DB_PASS": "****" if os.getenv("DB_PASS") else None,
-        "DB_NAME": os.getenv("DB_NAME")
-    }
-
-app = Flask(__name__, template_folder="templates", static_folder="static")
-app.secret_key = "clave_secreta_segura"
-
 @app.route("/health")
 def health():
     return "ok"
@@ -63,14 +49,20 @@ def health():
 def dbtest():
     try:
         conn = obtener_conexion()
-        cur = conn.cursor()
-        cur.execute("SELECT 1")
-        cur.fetchone()
-        cur.close()
         conn.close()
         return "DB OK ✅"
     except Exception as e:
         return f"DB FAIL ❌: {e}", 500
+
+@app.route("/debug_vars")
+def debug_vars():
+    return jsonify({
+        "DB_HOST": os.getenv("DB_HOST"),
+        "DB_PORT": os.getenv("DB_PORT"),
+        "DB_USER": os.getenv("DB_USER"),
+        "DB_PASS": "****" if os.getenv("DB_PASS") else None,
+        "DB_NAME": os.getenv("DB_NAME")
+    })
 
 # ---------------------- VALIDACIONES ----------------------
 def validar_correo(correo: str) -> bool:
@@ -98,18 +90,7 @@ def obtener_saludo():
         return "Buenas tardes"
     else:
         return "Buenas noches"
-
-# ---------------------- CONEXIÓN A MYSQL ----------------------
-def obtener_conexion():
-    return mysql.connector.connect(
-        host="127.0.0.1",
-        port=3306,
-        user="root",
-        password="",
-        database="empresa",
-        autocommit=False,
-    )
-
+        
 def tabla_existe(nombre_tabla: str) -> bool:
     """Comprueba si una tabla existe en la base de datos."""
     conn = obtener_conexion()
