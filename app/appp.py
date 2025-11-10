@@ -1,6 +1,7 @@
 # --- imports ---
 import os
 import re
+import bcrypt
 from datetime import datetime
 from io import BytesIO
 
@@ -19,7 +20,8 @@ app = Flask(__name__, template_folder="templates", static_folder="static")
 app.secret_key = "clave_secreta_segura" 
 
 def obtener_conexion():
-    import socket
+    import socket, os
+    import mysql.connector
 
     host_env = os.getenv("DB_HOST", "127.0.0.1").strip()
     port_env = os.getenv("DB_PORT", "3306").strip()
@@ -34,19 +36,19 @@ def obtener_conexion():
 
     try:
         resolved_ip = socket.gethostbyname(host_env)
-    except Exception as e:
-        resolved_ip = host_env  
+    except Exception:
+        resolved_ip = host_env
 
     print(f"[DB] env host={host_env} -> resolved_ip={resolved_ip} port={port} user={user} db={database}")
 
     try:
         conn = mysql.connector.connect(
-            host=resolved_ip,         
+            host=resolved_ip,
             port=port,
             user=user,
             password=password,
             database=database,
-            ssl_disabled=True,
+            ssl_disabled=True,      # si falla luego, probamos quitando esta línea
             connection_timeout=8,
             use_pure=True,
         )
@@ -70,7 +72,6 @@ def dbtest():
         cur.close(); conn.close()
         return f"DB OK ✅ (DB={db}, @@port={srvport})"
     except Exception as e:
-        # Además devuelve lo que ve en env para comparar
         return (
             "DB FAIL ❌: "
             + str(e)
