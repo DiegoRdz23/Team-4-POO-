@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Cambiar Contraseña | Industrial Parts{% endblock %}
+{% block content %}
+<div class="login-card" style="max-width:420px;">
+  <h2 style="text-align:center;">Cambiar Contraseña</h2>
+  <p style="text-align:center; font-size:14px; color:#777;">Actualiza tu contraseña por una nueva segura.</p>
+
+  <form method="POST" action="{{ url_for('cambiar_contrasena') }}" style="margin-top:15px; display:flex; flex-direction:column; gap:12px;">
+    <div class="input-group">
+      <label for="actual">Contraseña actual</label>
+      <input type="password" id="actual" name="actual" required placeholder="••••••••">
+    </div>
+
+    <div class="input-group">
+      <label for="nueva">Nueva contraseña</label>
+      <input type="password" id="nueva" name="nueva" required placeholder="••••••••">
+    </div>
+
+    <div class="input-group">
+      <label for="confirmar">Confirmar nueva contraseña</label>
+      <input type="password" id="confirmar" name="confirmar" required placeholder="••••••••">
+    </div>
+
+    <button type="submit" class="btn" style="margin-top:8px;">
+      <i class="fas fa-key"></i> Actualizar Contraseña
+    </button>
+
+    <button type="button" class="btn" onclick="window.location.href='{{ url_for('menu') }}'">
+      <i class="fas fa-arrow-left"></i> Volver al menú
+    </button>
+  </form>
+</div>
+{% endblock %}

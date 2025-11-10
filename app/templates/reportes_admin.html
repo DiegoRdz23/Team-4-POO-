@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Reportes | Industrial Parts{% endblock %}
+{% block content %}
+
+<div class="main-container" style="display:flex; justify-content:center; margin-top:40px;">
+
+  <!-- TARJETA BLANCA -->
+  <div style="background:white; padding:30px; border-radius:12px; width:90%; max-width:600px; box-shadow:0 4px 12px rgba(0,0,0,0.12); text-align:center;">
+
+    <h2 style="margin-bottom:10px;">Reportes del Sistema</h2>
+    <p style="color:#666;">Generar reportes en PDF</p>
+
+    <div style="display:flex; flex-direction:column; gap:14px; margin-top:25px;">
+
+      <!-- Reporte Pedidos Clientes -->
+      <button class="login-button"
+        onclick="window.location.href='{{ url_for('reporte_pedidos_clientes') }}'">
+        Reporte de Pedidos de Clientes
+      </button>
+
+      <!-- Reporte Inventario -->
+      <button class="login-button"
+        onclick="window.location.href='{{ url_for('reporte_inventario') }}'">
+         Reporte de Inventario
+      </button>
+
+      <!-- Reporte Catálogo -->
+      <button class="login-button"
+        onclick="window.location.href='{{ url_for('reporte_catalogo') }}'">
+        Reporte de Catálogo
+      </button>
+
+    </div>
+
+    <div style="margin-top:25px;">
+      <button class="login-button" style="background:#555;"
+        onclick="window.location.href='{{ url_for('menu') }}'">
+         Volver al Menú
+      </button>
+    </div>
+
+  </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,131 @@
+{% extends "base.html" %} {% block title %}Gestión de Proveedores | Industrial
+Parts{% endblock %} {% block content %}
+<div class="login-card" style="max-width: 900px">
+  <h2 style="text-align: center">Proveedores</h2>
+  <p style="text-align: center; font-size: 14px; color: #777">
+    Registra y gestiona tus proveedores. Los pedidos a proveedores se capturan
+    en el módulo <strong>Pedidos Proveedores</strong>.
+  </p>
+
+  <div style="margin-top: 20px">
+    <h3><i class="fas fa-truck"></i> Registrar nuevo proveedor</h3>
+    <form
+      action="{{ url_for('proveedores') }}"
+      method="POST"
+      style="
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 10px;
+        margin-top: 10px;
+      "
+    >
+      <div class="input-group">
+        <label for="nombreProveedor">Nombre del proveedor</label>
+        <input
+          type="text"
+          id="nombreProveedor"
+          name="nombre"
+          placeholder="Ej: Aceros del Norte"
+          required
+        />
+      </div>
+      <div class="input-group">
+        <label for="correoProveedor">Correo de contacto</label>
+        <input
+          type="email"
+          id="correoProveedor"
+          name="correo"
+          placeholder="Ej: contacto@acerosnorte.com"
+          required
+        />
+      </div>
+      <div class="input-group">
+        <label for="telefonoProveedor">Teléfono</label>
+        <input
+          type="text"
+          id="telefonoProveedor"
+          name="telefono"
+          placeholder="Ej: +52 81 9999 9999"
+        />
+      </div>
+      <button type="submit" class="btn" style="grid-column: 1/-1">
+        <i class="fas fa-save"></i> Agregar proveedor
+      </button>
+    </form>
+  </div>
+
+  <h3 style="margin-top: 30px; text-align: center">Proveedores registrados</h3>
+  <table id="tablaProveedores">
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Correo</th>
+        <th>Teléfono</th>
+        <th style="width: 1%; white-space: nowrap; text-align: center">
+          Acciones
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for p in proveedores %}
+      <tr>
+        <td>{{ p.nombre }}</td>
+        <td>{{ p.correo or '' }}</td>
+        <td>{{ p.telefono or '' }}</td>
+        <td style="text-align: center">
+          <div
+            style="
+              display: flex;
+              gap: 8px;
+              justify-content: center;
+              flex-wrap: wrap;
+            "
+          >
+            <a
+              href="{{ url_for('editar_proveedor', id_proveedor=p.id_proveedor) }}"
+              class="btn btn-dark"
+              title="Editar proveedor"
+            >
+              <i class="fas fa-edit"></i> Editar
+            </a>
+
+            <form
+              action="{{ url_for('eliminar_proveedor', prov_id=p.id_proveedor) }}"
+              method="POST"
+              onsubmit="return confirm('¿Eliminar al proveedor {{ p.nombre }}?');"
+              style="display: inline-block"
+            >
+              <button
+                type="submit"
+                class="btn btn-danger"
+                title="Eliminar proveedor"
+              >
+                <i class="fas fa-trash"></i> Eliminar
+              </button>
+            </form>
+          </div>
+        </td>
+      </tr>
+      {% else %}
+      <tr>
+        <td colspan="4" style="text-align: center; color: #666">
+          Sin proveedores registrados.
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <div style="display: flex; justify-content: space-between; margin-top: 20px">
+    <button class="btn" onclick="window.location.href='{{ url_for('menu') }}'">
+      <i class="fas fa-arrow-left"></i> Volver al menú
+    </button>
+    <button
+      class="btn"
+      onclick="window.location.href='{{ url_for('pedidos_proveedores') }}'"
+    >
+      <i class="fas fa-dolly"></i> Ir a Pedidos Proveedores
+    </button>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,145 @@
+{% extends "base.html" %} 
+{% block title %}Pedidos | Industrial Parts{% endblock %}
+
+{% block content %}
+<div class="login-card" style="max-width: 1100px;">
+  <h2 style="text-align:center;">Pedidos (Clientes)</h2>
+  <p style="text-align:center; font-size:14px; color:#777;">
+    Registra el pedido y gestiona su estado en la misma vista.
+  </p>
+
+  <!-- Alta de pedido (UN SOLO FORM) -->
+  <div style="margin-top: 16px; text-align:left;">
+    <h3><i class="fas fa-file-invoice"></i> Registrar nuevo pedido</h3>
+    <form
+      action="{{ url_for('pedidos') }}"
+      method="POST"
+      style="margin-top:10px; display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:10px;"
+    >
+      <div class="input-group">
+        <label for="clienteSelect">Cliente</label>
+        <select id="clienteSelect" name="cliente" required>
+          <option value="">Selecciona un cliente</option>
+          {% for c in clientes %}
+          <option value="{{ c.nombre }}">{{ c.nombre }}{% if c.correo %} ({{ c.correo }}){% endif %}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="input-group">
+        <label for="codigo">Código de pedido</label>
+        <input type="text" id="codigo" name="codigo_pedido" placeholder="Ej: OC-99-25" required />
+      </div>
+
+      <div class="input-group">
+        <label for="descripcion">Descripción del producto</label>
+        <input type="text" id="descripcion" name="descripcion" placeholder="Ej: Pija para acero" required />
+      </div>
+
+      <div class="input-group">
+        <label for="medida">Tamaño/Medida</label>
+        <input type="text" id="medida" name="medida" placeholder="Ej: 1/4'' x 2''" required />
+      </div>
+
+      <div class="input-group">
+        <label for="cantidad">Cantidad</label>
+        <input type="number" id="cantidad" name="cantidad" min="1" placeholder="Ej: 50" required />
+      </div>
+
+      <div class="input-group">
+        <label for="estado">Estado</label>
+        <select id="estado" name="estado" required>
+          <option value="pendiente">Pendiente</option>
+          <option value="confirmado">Confirmado</option>
+          <option value="enviado">Enviado</option>
+          <option value="entregado">Entregado</option>
+          <option value="cancelado">Cancelado</option>
+        </select>
+      </div>
+
+      <button type="submit" class="btn" style="grid-column: 1 / -1; justify-self:start;">
+        <i class="fas fa-save"></i> Guardar pedido
+      </button>
+    </form>
+  </div>
+
+  <!-- (Opcional) Filtro por estado -->
+  <form method="get" action="{{ url_for('pedidos') }}" style="margin: 18px 0;">
+    <label for="f_estado">Filtrar por estado:</label>
+    <select id="f_estado" name="estado">
+      {% set estados_f = ['', 'pendiente','confirmado','enviado','entregado','cancelado'] %}
+      {% for e in estados_f %}
+        <option value="{{ e }}" {% if filtro_estado==e %}selected{% endif %}>{{ 'Todos' if e=='' else e|capitalize }}</option>
+      {% endfor %}
+    </select>
+    <button type="submit" class="btn" style="margin-left:8px;">Aplicar</button>
+  </form>
+
+  <!-- UNA SOLA TABLA: incluye detalle (desc/medida/cantidad) y estado -->
+  <h3 style="margin-top: 10px; text-align:center;">Pedidos registrados</h3>
+  <div style="overflow-x:auto;">
+    <table id="tablaPedidos" style="width:100%;">
+      <thead>
+        <tr>
+          <th>Cliente</th>
+          <th>Código</th>
+          <th>Descripción</th>
+          <th>Tamaño</th>
+          <th>Cantidad</th>
+          <th>Estado</th>
+          <th>Últ. cambio</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in pedidos %}
+        <tr class="estado-{{ p.estado or 'pendiente' }}">
+          <td>{{ p.cliente }}</td>
+          <td>{{ p.codigo_pedido }}</td>
+          <td>{{ p.descripcion }}</td>
+          <td>{{ p.medida }}</td>
+          <td>{{ p.cantidad }}</td>
+          <td>
+            <form method="post"
+                  action="{{ url_for('actualizar_estado_pedcli', pedido_id=p.id_pedidoc) }}?ref={{ request.full_path|urlencode }}"
+                  style="display:flex; gap:6px; align-items:center;">
+              <select name="estado" {% if rol not in ['admin','empleado'] %}disabled{% endif %}>
+                {% set estados = ['pendiente','confirmado','enviado','entregado','cancelado'] %}
+                {% for e in estados %}
+                  <option value="{{ e }}" {% if p.estado==e %}selected{% endif %}>{{ e|capitalize }}</option>
+                {% endfor %}
+              </select>
+              {% if rol in ['admin','empleado'] %}
+                <button type="submit" class="btn">Guardar</button>
+              {% endif %}
+            </form>
+          </td>
+          <td>{{ p.fecha_estado and p.fecha_estado.strftime('%Y-%m-%d %H:%M') or '-' }}</td>
+          <td><!-- aquí puedes poner Ver/Imprimir/etc. --></td>
+        </tr>
+        {% else %}
+        <tr><td colspan="8" style="text-align:center; color:#666;">Sin pedidos registrados.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div style="display:flex; justify-content:space-between; margin-top:20px;">
+    <button class="btn" onclick="window.location.href='{{ url_for('menu') }}'">
+      <i class="fas fa-arrow-left"></i> Volver al menú
+    </button>
+    <button class="btn" onclick="window.location.href='{{ url_for('clientes') }}'">
+      <i class="fas fa-users"></i> Ir a Clientes
+    </button>
+  </div>
+</div>
+
+<!-- Colores por estado (opcional) -->
+<style>
+  .estado-pendiente  { background: rgba(128,128,128,.06); }
+  .estado-confirmado { background: rgba(0,123,255,.06); }
+  .estado-enviado    { background: rgba(255,193,7,.10); }
+  .estado-entregado  { background: rgba(40,167,69,.10); }
+  .estado-cancelado  { background: rgba(220,53,69,.10); }
+</style>
+{% endblock %}

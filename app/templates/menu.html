@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block title %}Menú Principal | Industrial Parts{% endblock %}
+{% block content %}
+
+<div class="login-card" style="max-width: 480px">
+  <!-- ====== Encabezado / Logo ====== -->
+  <div class="logo-section">
+    <div class="logo-icon">
+      <div class="gear-container">
+        <i class="fas fa-cog gear-1"></i>
+        <i class="fas fa-cog gear-2"></i>
+        <i class="fas fa-cog gear-3"></i>
+      </div>
+    </div>
+    <h1 class="company-name">Industrial Parts</h1>
+    <p class="company-subtitle">Sistema Principal</p>
+  </div>
+
+  {% if rol == 'consultor' %}
+  <p class="modo-consulta" style="text-align: center; color: #777; margin-top: 10px">
+    Modo consulta activa (solo pedidos e inventario)
+  </p>
+  {% endif %}
+
+  
+  <div class="menu-buttons" style="display: flex; flex-direction: column; gap: 16px; margin-top: 24px">
+
+    {% if rol == 'admin' %}
+    <button class="login-button" onclick="window.location.href='{{ url_for('usuarios') }}'">
+      <i class="fas fa-user"></i> Usuarios
+    </button>
+
+    <button class="login-button" onclick="window.location.href='{{ url_for('reportes_admin') }}'">
+      <i class="fas fa-chart-column"></i> Reportes 
+    </button>
+    {% endif %}
+
+    <button class="login-button" onclick="window.location.href='{{ url_for('cambiar_contrasena') }}'">
+      <i class="fas fa-key"></i> Cambiar contraseña
+    </button>
+
+    {% if rol in ['admin','empleado'] %}
+    <button class="login-button" onclick="window.location.href='{{ url_for('clientes') }}'">
+      <i class="fas fa-users"></i> Clientes
+    </button>
+
+    <button class="login-button" onclick="window.location.href='{{ url_for('proveedores') }}'">
+      <i class="fas fa-truck"></i> Proveedores
+    </button>
+
+    <button class="login-button" onclick="window.location.href='{{ url_for('catalogo') }}'">
+      <i class="fas fa-tags"></i> Catálogo
+    </button>
+
+    <button class="login-button" onclick="window.location.href='{{ url_for('inventario') }}'">
+      <i class="fas fa-boxes-stacked"></i> Inventario
+    </button>
+
+    <button class="login-button" onclick="window.location.href='{{ url_for('pedidos_proveedores') }}'">
+      <i class="fas fa-dolly"></i> Pedidos Proveedores
+    </button>
+
+    <button class="login-button" onclick="window.location.href='{{ url_for('pedidos') }}'">
+      <i class="fas fa-file-invoice"></i> Pedidos Clientes
+    </button>
+    {% endif %}
+
+    {% if rol == 'consultor' %}
+    <button class="login-button" onclick="window.location.href='{{ url_for('inventario') }}'">
+      <i class="fas fa-boxes-stacked"></i> Inventario
+    </button>
+
+    <button class="login-button" onclick="window.location.href='{{ url_for('pedidos_consultor') }}'">
+      <i class="fas fa-file-invoice"></i> Pedidos Clientes
+    </button>
+
+    
+    <button class="login-button" onclick="window.location.href='{{ url_for('reportes_consultor') }}'">
+      <i class="fas fa-clipboard-list"></i> Reporte de Stock
+    </button>
+    {% endif %}
+
+  </div>
+</div>
+
+{% endblock %}

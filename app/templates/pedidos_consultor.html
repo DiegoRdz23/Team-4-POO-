@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Pedidos Clientes (Consulta) | Industrial Parts{% endblock %}
+{% block content %}
+
+
+<div style="display:flex; justify-content:center; margin-top:40px; padding-bottom:40px;">
+
+  
+  <div style="background:white; padding:35px; border-radius:12px; width:85%; max-width:1200px; box-shadow:0 4px 14px rgba(0,0,0,0.12);">
+
+    <h2 style="text-align:center; margin-bottom:10px;">Pedidos</h2>
+    <p style="text-align:center; color:#777;"></p>
+
+    <table class="table table-striped table-hover" style="margin-top:20px; text-align:center;">
+      <thead>
+        <tr>
+          <th>Cliente</th>
+          <th>Código</th>
+          <th>Descripción</th>
+          <th>Tamaño / Medida</th>
+          <th>Cantidad</th>
+          <th>Estado</th>
+          <th>Último Cambio</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in pedidos %}
+        <tr>
+          <td>{{ p.cliente }}</td>
+          <td>{{ p.codigo_pedido }}</td>
+          <td>{{ p.descripcion }}</td>
+          <td>{{ p.medida }}</td>
+          <td>{{ p.cantidad }}</td>
+
+        
+          <td style="font-weight:bold;">
+            {% if p.estado == 'pendiente' %}
+              <span style="background:#fff3cd; color:#b88600; padding:4px 8px; border-radius:6px;">Pendiente</span>
+            {% elif p.estado == 'confirmado' %}
+              <span style="background:#e7f1ff; color:#0d6efd; padding:4px 8px; border-radius:6px;">Confirmado</span>
+            {% elif p.estado == 'enviado' %}
+              <span style="background:#f3e7ff; color:#9747ff; padding:4px 8px; border-radius:6px;">Enviado</span>
+            {% elif p.estado == 'entregado' %}
+              <span style="background:#e2f7e9; color:#2c9b43; padding:4px 8px; border-radius:6px;">Entregado</span>
+            {% elif p.estado == 'cancelado' %}
+              <span style="background:#fde2e1; color:#d9534f; padding:4px 8px; border-radius:6px;">Cancelado</span>
+            {% else %}
+              {{ p.estado }}
+            {% endif %}
+          </td>
+
+          <td>{{ p.fecha_estado }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <!-- BOTÓN VOLVER -->
+    <div style="text-align:center; margin-top:25px;">
+      <button class="login-button" onclick="window.location.href='{{ url_for('menu') }}'">
+         Volver al Menú
+      </button>
+    </div>
+
+  </div>
+</div>
+
+{% endblock %}

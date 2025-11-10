@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Reportes (Consultor) | Industrial Parts{% endblock %}
+{% block content %}
+
+<div class="main-container" style="display:flex; justify-content:center; margin-top:30px;">
+
+  <div style="background:white; padding:30px; border-radius:12px; width:350px; text-align:center; box-shadow:0 4px 12px rgba(0,0,0,0.15);">
+    
+    <h2>Reportes de Inventario</h2>
+    <p style="color:#777;"></p>
+
+    <button class="login-button" onclick="window.location.href='{{ url_for('reporte_inventario') }}'">
+      <i class="fas fa-print"></i> Reporte de Stock
+    </button>
+
+    <div style="margin-top:20px;">
+      <button class="login-button" onclick="window.location.href='{{ url_for('menu') }}'">
+        Volver al Menú
+      </button>
+    </div>
+
+  </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,72 @@
+{% extends "base.html" %} {% block title %}Gestión de Usuarios | Industrial
+Parts{% endblock %} {% block content %}
+<div class="login-card" style="max-width: 700px">
+  <h2>Registrar nuevo usuario</h2>
+  <form method="POST" action="{{ url_for('usuarios') }}">
+    <div class="input-group">
+      <label for="nombre">Nombre:</label>
+      <input type="text" name="nombre" required />
+    </div>
+
+    <div class="input-group">
+      <label for="correo">Correo:</label>
+      <input type="email" name="correo" required />
+    </div>
+
+    <div class="input-group">
+      <label for="rol">Rol:</label>
+      <select name="rol" required>
+        <option value="">Selecciona un rol</option>
+        <option value="admin">Administrador</option>
+        <option value="empleado">Empleado</option>
+        <option value="consultor">Consultor</option>
+      </select>
+    </div>
+
+    <button type="submit" class="btn">
+      <i class="fas fa-user-plus"></i> Agregar usuario
+    </button>
+  </form>
+
+  <h2>Usuarios registrados</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Correo</th>
+        <th>Rol</th>
+        <th>Acción</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for u in usuarios %}
+      <tr>
+        <td>{{ u.id }}</td>
+        <td>{{ u.nombre }}</td>
+        <td>{{ u.correo }}</td>
+        <td>{{ u.rol }}</td>
+        <td>
+          <form
+            method="POST"
+            action="{{ url_for('eliminar_usuario', usuario_id=u.id) }}"
+            style="display: inline"
+          >
+            <button type="submit" class="btn btn-danger">
+              <i class="fas fa-trash"></i> Eliminar
+            </button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+    <div style="display:flex; justify-content:space-between; margin-top:20px;">
+    <button class="btn" onclick="window.location.href='{{ url_for('menu') }}'">
+      <i class="fas fa-arrow-left"></i> Volver al menú
+    </button>
+  </div>
+</div>
+</div>
+{% endblock %}

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <title>{% block title %}Industrial Parts{% endblock %}</title>
+
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/css.css') }}"
+    />
+
+    <style>
+      /* ========= Ajuste general del layout ========= */
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .container {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      /* ========= Footer fijo y con efecto visual ========= */
+      footer {
+        text-align: center;
+        width: 100%;
+        padding: 10px 0;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        font-size: 14px;
+        color: #fff;
+        transition: background 0.4s ease, color 0.4s ease;
+        backdrop-filter: blur(6px);
+        box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      /* Colores dinámicos según rol */
+      .footer-login {
+        background: rgba(255, 255, 255, 0.85);
+        color: #333;
+      }
+      .footer-admin {
+        background: linear-gradient(90deg, #f39c12, #e67e22);
+      }
+      .footer-empleado {
+        background: linear-gradient(90deg, #2c3e50, #34495e);
+      }
+      .footer-consultor {
+        background: linear-gradient(90deg, #34495e, #5d6d7e);
+      }
+
+      footer a {
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s;
+      }
+
+      .footer-login a {
+        color: #1a1a1a;
+      }
+      .footer-login a:hover {
+        color: #f39c12;
+      }
+
+      footer a {
+        color: #fff;
+      }
+      footer a:hover {
+        color: #ffd280;
+      }
+
+      .divider {
+        margin: 0 6px;
+      }
+
+      html,
+      body {
+        height: auto !important;
+        min-height: 100vh;
+        overflow-y: auto;
+        scroll-behavior: smooth;
+      }
+
+      .login-card {
+        max-height: none !important;
+        overflow: visible !important;
+        margin: 40px auto;
+      }
+
+      main,
+      .content {
+        overflow-y: visible !important;
+        height: auto !important;
+      }
+    </style>
+    <style>
+      .btn,
+      a.btn {
+        border: none;
+        border-radius: 6px;
+        padding: 6px 14px; /* iguala ambos */
+        font-size: 13px;
+        color: #fff;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-weight: 500;
+        transition: background 0.2s ease, transform 0.1s ease;
+      }
+      .btn:hover {
+        filter: brightness(1.08);
+        transform: scale(1.03);
+      }
+      .btn-dark {
+        background-color: #1f2328;
+      }
+      .btn-danger {
+        background-color: #d9534f;
+      }
+    </style>
+
+    {% block extra_head %}{% endblock %}
+  </head>
+
+  <body>
+    {% if rol %}
+    <div class="top-bar {% if rol == 'consultor' %}consultor-bar{% endif %}">
+      <div class="user-info">
+        <i class="fas fa-user-circle"></i>
+        {{ saludo }}, {{ user_name }} 👋
+      </div>
+      <button onclick="window.location.href='{{ url_for('logout') }}'">
+        <i class="fas fa-sign-out-alt"></i> Cerrar sesión
+      </button>
+    </div>
+    {% endif %}
+
+    <div class="container">{% block content %}{% endblock %}</div>
+
+    <!-- ✅ Footer con color según rol -->
+    <footer
+      class="footer-links {% if not rol %} footer-login {% elif rol == 'admin' %} footer-admin {% elif rol == 'empleado' %} footer-empleado {% elif rol == 'consultor' %} footer-consultor {% endif %}"
+    >
+      <a href="#">Industrial Parts © 2025</a>
+      <span class="divider">•</span>
+      <a href="#">Gestión empresarial</a>
+    </footer>
+  </body>
+</html>

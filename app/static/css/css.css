@@ -1,0 +1,296 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  background: linear-gradient(135deg, #f4f4f4, #e6e9f0);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+  color: #333;
+}
+
+.container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 60px;
+}
+
+a {
+  text-decoration: none;
+  color: #1a1a1a;
+}
+
+a:hover {
+  color: #f39c12;
+}
+
+.login-card {
+  background-color: #fff;
+  padding: 32px;
+  border-radius: 14px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  transition: transform 0.2s ease;
+}
+
+.login-card:hover {
+  transform: translateY(-3px);
+}
+
+.logo-section {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.logo-icon {
+  margin-bottom: 12px;
+}
+
+.company-name {
+  font-size: 26px;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.company-subtitle {
+  font-size: 14px;
+  color: #888;
+}
+
+.input-group {
+  text-align: left;
+  margin-bottom: 16px;
+}
+
+.input-group label {
+  font-weight: 500;
+  font-size: 14px;
+  color: #333;
+}
+
+.input-group input,
+.input-group select {
+  width: 100%;
+  padding: 10px;
+  margin-top: 6px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.input-group input:focus,
+.input-group select:focus {
+  border-color: #f39c12;
+}
+
+/* ==============================
+   Botones globales
+   ============================== */
+
+.login-button,
+.btn {
+  width: 100%;
+  background-color: #1a1a1a;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 8px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.login-button:hover,
+.btn:hover {
+  background-color: #f39c12;
+}
+
+/* Botón de eliminar (rojo) */
+.btn-danger {
+  background-color: #c0392b !important;
+}
+.btn-danger:hover {
+  background-color: #e74c3c !important;
+}
+
+/* ==============================
+   Barra superior (todas las páginas)
+   ============================== */
+
+.top-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: #1a1a1a;
+  color: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 24px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  z-index: 10;
+  animation: slideDown 0.6s ease;
+}
+
+.top-bar button {
+  background: none;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: color 0.3s;
+}
+
+.top-bar button:hover {
+  color: #f39c12;
+}
+
+.top-bar .user-info {
+  font-weight: 500;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  animation: fadeIn 1s ease;
+}
+
+/* Variante para consultor */
+.consultor-bar {
+  background-color: #2c3e50 !important;
+}
+
+/* Animaciones */
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ==============================
+   Footer general
+   ============================== */
+
+.footer-links {
+  margin-top: 20px;
+  font-size: 13px;
+  color: #777;
+}
+.footer-links a {
+  color: #1a1a1a;
+}
+.footer-links a:hover {
+  color: #f39c12;
+}
+.divider {
+  margin: 0 6px;
+}
+
+/* ==============================
+   Tablas (Usuarios, Inventario, etc.)
+   ============================== */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+th,
+td {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+  text-align: left;
+}
+
+th {
+  background-color: #f4f4f4;
+  font-weight: 600;
+}
+
+tr:hover {
+  background-color: #f9f9f9;
+}
+
+/* ==============================
+   Modo consulta / mensajes especiales
+   ============================== */
+
+.modo-consulta {
+  text-align: center;
+  font-size: 14px;
+  color: #777;
+  margin-bottom: 10px;
+  font-style: italic;
+}
+
+/* ==============================
+   Íconos giratorios del logo
+   ============================== */
+
+.gear-container {
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.gear-1 {
+  color: #1a1a1a;
+  font-size: 20px;
+  animation: spin 5s linear infinite;
+}
+.gear-2 {
+  color: #f39c12;
+  font-size: 18px;
+  animation: spinReverse 6s linear infinite;
+}
+.gear-3 {
+  color: #1a1a1a;
+  font-size: 16px;
+  animation: spin 7s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes spinReverse {
+  from {
+    transform: rotate(360deg);
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}

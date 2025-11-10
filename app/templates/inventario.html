@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+{% block title %}Inventario | Industrial Parts{% endblock %}
+{% block content %}
+<div class="login-card" style="max-width: 1100px">
+  <h2 style="text-align: center">Inventario</h2>
+  <p style="text-align: center; font-size: 14px; color: #777">
+    Consulta existencias actuales 
+  </p>
+
+  {% if rol in ['admin', 'consultor'] %}
+  <div style="text-align: right; margin-bottom: 15px">
+    <a href="{{ url_for('reporte_inventario') }}" class="btn" target="_blank"
+      style="background: #3498db; color: white; padding: 8px 14px; border-radius: 8px; text-decoration: none;">
+      📄 Generar reporte de inventario
+    </a>
+  </div>
+  {% endif %}
+
+  <table id="tablaInventario">
+    <thead>
+      <tr>
+        <th>SKU</th>
+        <th>Tipo de pieza</th>
+        <th>Descripción</th>
+        <th>Medida</th>
+        <th style="text-align: right">Precio (MXN)</th>
+        <th style="text-align: right">Stock</th>
+        <th style="text-align: right">Stock mín.</th>
+
+        {% if rol in ['admin', 'empleado'] %}
+        <th>Acciones</th>
+        {% endif %}
+      </tr>
+    </thead>
+    <tbody>
+      {% if inventario and inventario|length > 0 %}
+      {% for it in inventario %}
+      {% set cls = 'stock-ok' %}
+      {% if it.stock < it.stock_min %}
+        {% set cls = 'stock-low' %}
+      {% elif it.stock < it.stock_min + 200 %}
+        {% set cls = 'stock-warn' %}
+      {% endif %}
+
+      <tr class="{{ cls }}">
+        <td>{{ it.SKU }}</td>
+        <td>{{ it.Tipo_de_pieza }}</td>
+        <td>{{ it.Descripcion }}</td>
+        <td>{{ it.Medida }}</td>
+        <td style="text-align: right">{{ "%.2f"|format(it.Precio or 0) }}</td>
+
+        <td style="text-align: right">
+          {% if it.stock < it.stock_min %}
+          <span class="pill pill-low">{{ it.stock }}</span>
+          {% elif it.stock < it.stock_min + 200 %}
+          <span class="pill pill-warn">{{ it.stock }}</span>
+          {% else %}
+          <span class="pill pill-ok">{{ it.stock }}</span>
+          {% endif %}
+        </td>
+
+        <td style="text-align: right">{{ it.stock_min }}</td>
+
+        {% if rol in ['admin', 'empleado'] %}
+        <td style="text-align: center">
+          <button class="btn" onclick="mostrarFormularioStock('{{ it.ID_Item }}','{{ it.SKU }}','{{ it.stock }}')">
+            <i class="fas fa-edit"></i> Actualizar
+          </button>
+        </td>
+        {% endif %}
+      </tr>
+      {% endfor %}
+      {% else %}
+      <tr>
+        <td colspan="8" style="text-align: center; color: #666">
+          Sin datos de inventario.
+        </td>
+      </tr>
+      {% endif %}
+    </tbody>
+  </table>
+
+  {% if rol in ['admin', 'empleado'] %}
+  <div id="formStock" style="display:none; margin-top:20px;">
+    <h3>Actualizar existencias</h3>
+    <form method="POST" action="{{ url_for('actualizar_stock') }}">
+      <input type="hidden" name="id_item" id="id_item">
+      <label>SKU:</label>
+      <input type="text" id="sku_editar" readonly>
+      <label>Nuevo stock:</label>
+      <input type="number" name="nuevo_stock" id="nuevo_stock" min="0" required>
+      <button type="submit" class="btn"><i class="fas fa-save"></i> Guardar</button>
+      <button type="button" class="btn" style="background-color:gray;" onclick="cancelarEdicion()">Cancelar</button>
+    </form>
+  </div>
+  {% endif %}
+
+  <div style="margin-top: 20px; text-align: right">
+    <button class="btn" onclick="window.location.href='{{ url_for('menu') }}'">
+      <i class="fas fa-arrow-left"></i> Volver al menú
+    </button>
+  </div>
+</div>
+
+<style>
+  #tablaInventario {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  #tablaInventario th,
+  #tablaInventario td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #eee;
+  }
+
+  .stock-low { background: #fff4f4; }
+  .stock-warn { background: #fffbe6; }
+  .stock-ok { background: #f8fffb; }
+
+  .pill {
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-weight: 600;
+  }
+  .pill-low { background: #fde2e2; color: #c03535; }
+  .pill-warn { background: #fff1b8; color: #8a6d1f; }
+  .pill-ok { background: #e6fbef; color: #1e7c4a; }
+</style>
+
+<script>
+function mostrarFormularioStock(id, sku, stock) {
+  document.getElementById('formStock').style.display = 'block';
+  document.getElementById('id_item').value = id;
+  document.getElementById('sku_editar').value = sku;
+  document.getElementById('nuevo_stock').value = stock;
+}
+
+function cancelarEdicion() {
+  document.getElementById('formStock').style.display = 'none';
+}
+</script>
+
+{% endblock %}

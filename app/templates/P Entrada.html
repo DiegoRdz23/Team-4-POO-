@@ -1,0 +1,74 @@
+{% extends "base.html" %} {% block title %}Inicio de Sesión | Industrial Parts{%
+endblock %} {% block content %}
+<div class="login-card" style="max-width: 420px">
+  <div class="logo-section">
+    <div class="logo-icon">
+      <div class="gear-container">
+        <i class="fas fa-cog gear-1"></i>
+        <i class="fas fa-cog gear-2"></i>
+        <i class="fas fa-cog gear-3"></i>
+      </div>
+    </div>
+    <h1 class="company-name">Industrial Parts</h1>
+    <p class="company-subtitle">Inventario y Pedidos</p>
+  </div>
+
+  <form
+    class="login-form"
+    id="loginForm"
+    action="{{ url_for('login') }}"
+    method="POST"
+  >
+    <div class="input-group">
+      <label for="usuario">Correo electrónico</label>
+      <input
+        type="email"
+        id="usuario"
+        name="usuario"
+        placeholder="usuario@empresa.com"
+        required
+      />
+    </div>
+
+    <div class="input-group">
+      <label for="password">Contraseña</label>
+      <div class="password-wrapper" style="display: flex; align-items: center">
+        <input
+          type="password"
+          id="password"
+          name="password"
+          placeholder="••••••••"
+          required
+          style="flex: 1"
+        />
+        <button
+          type="button"
+          class="toggle-password"
+          id="togglePassword"
+          style="background: none; border: none; margin-left: 8px"
+        >
+          <i class="fas fa-eye"></i>
+        </button>
+      </div>
+    </div>
+
+    <button type="submit" class="login-button" id="loginBtn">
+      Iniciar sesión
+    </button>
+  </form>
+</div>
+
+<script>
+  // Mostrar/ocultar contraseña
+  document.addEventListener("DOMContentLoaded", function () {
+    const toggle = document.getElementById("togglePassword");
+    const pass = document.getElementById("password");
+    toggle.addEventListener("click", () => {
+      const tipo = pass.type === "password" ? "text" : "password";
+      pass.type = tipo;
+      toggle.querySelector("i").classList.toggle("fa-eye");
+      toggle.querySelector("i").classList.toggle("fa-eye-slash");
+    });
+  });
+</script>
+{% endblock %}

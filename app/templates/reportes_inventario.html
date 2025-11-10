@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Reporte de Inventario{% endblock %}
+
+{% block content %}
+<div class="login-card" style="max-width: 1000px">
+  <h2 style="text-align: center">📊 Reporte de Inventario</h2>
+  <p style="text-align: center; color: #666; font-size: 14px;">
+    Generado por {{ user_name }} | {{ saludo }}
+  </p>
+
+  <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+    <thead>
+      <tr style="background: #f2f2f2;">
+        <th>SKU</th>
+        <th>Tipo de pieza</th>
+        <th>Descripción</th>
+        <th>Medida</th>
+        <th style="text-align: right;">Precio</th>
+        <th style="text-align: right;">Stock</th>
+        <th style="text-align: right;">Stock mín.</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for it in datos %}
+      {% set cls = 'ok' %}
+      {% if it.stock < it.stock_min %}{% set cls = 'bajo' %}
+      {% elif it.stock < it.stock_min + 200 %}{% set cls = 'medio' %}
+      {% endif %}
+
+      <tr class="{{ cls }}">
+        <td>{{ it.SKU }}</td>
+        <td>{{ it.Tipo_de_pieza }}</td>
+        <td>{{ it.Descripcion }}</td>
+        <td>{{ it.Medida }}</td>
+        <td style="text-align: right;">{{ "%.2f"|format(it.Precio or 0) }}</td>
+        <td style="text-align: right;">{{ it.stock }}</td>
+        <td style="text-align: right;">{{ it.stock_min }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <div style="margin-top: 20px; text-align: right;">
+    <button class="btn" onclick="window.print()">🖨️ Imprimir</button>
+  </div>
+</div>
+
+<style>
+  table, th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+  }
+  tr.bajo { background: #fde2e2; }
+  tr.medio { background: #fff7d1; }
+  tr.ok { background: #e9f9e5; }
+</style>
+{% endblock %}

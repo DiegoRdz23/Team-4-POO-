@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Reportes del Sistema</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f4f4; text-align: center; padding: 30px; }
+        .contenedor { background: white; padding: 30px; border-radius: 10px; width: 60%; margin: auto; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        h1 { color: #333; }
+        a.boton {
+            display: inline-block; margin: 10px; padding: 10px 20px;
+            background: #007bff; color: white; text-decoration: none; border-radius: 5px;
+        }
+        a.boton:hover { background: #0056b3; }
+    </style>
+</head>
+<body>
+    <div class="contenedor">
+        <h1>Reportes del Sistema</h1>
+        <p>Selecciona el reporte que deseas generar:</p>
+
+        <a class="boton" href="{{ url_for('reporte_pedidos_clientes') }}">📄 Reporte de Pedidos de Clientes</a>
+        <a class="boton" href="{{ url_for('reporte_pedidos_proveedores') }}">📄 Reporte de Pedidos de Proveedores</a>
+    </div>
+</body>
+</html>

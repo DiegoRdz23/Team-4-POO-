@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Mensaje | Industrial Parts{% endblock %}
+{% block content %}
+<div class="login-card" style="max-width: 480px; text-align: center;">
+  {% if "✅" in mensaje %}
+  <div style="font-size: 48px; color: #2ecc71; margin-bottom: 10px;">
+    <i class="fas fa-check-circle"></i>
+  </div>
+  <h2 style="color: #2ecc71;">Éxito</h2>
+  <p style="font-size: 16px; color: #444;">{{ mensaje }}</p>
+  {% else %}
+  <div style="font-size: 48px; color: #e74c3c; margin-bottom: 10px;">
+    <i class="fas fa-exclamation-triangle"></i>
+  </div>
+  <h2 style="color: #e74c3c;">Error</h2>
+  <p style="font-size: 16px; color: #444;">{{ mensaje }}</p>
+  {% endif %}
+
+  <button class="btn" style="margin-top:20px;" onclick="window.location.href='{{ url_for('menu') }}'">
+    <i class="fas fa-arrow-left"></i> Volver al menú
+  </button>
+</div>
+{% endblock %}

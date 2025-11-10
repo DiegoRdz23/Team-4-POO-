@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+{% block title %}Pedidos a Proveedores | Industrial Parts{% endblock %}
+{% block content %}
+<div class="login-card" style="max-width:1000px;">
+  <h2 style="text-align:center;">Pedidos a Proveedores</h2>
+  <p style="text-align:center; font-size:14px; color:#777;">
+    Registra pedidos de compra seleccionando un proveedor existente.
+  </p>
+
+  <!-- Formulario (envía a backend) -->
+  <div style="margin-top:20px;">
+    <h3><i class="fas fa-dolly"></i> Registrar pedido a proveedor</h3>
+    <form
+      action="{{ url_for('pedidos_proveedores') }}"
+      method="POST"
+      style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:10px; margin-top:10px;"
+    >
+      <div class="input-group">
+        <label for="proveedorSelect">Proveedor</label>
+        <select id="proveedorSelect" name="proveedor" required>
+          <option value="">Selecciona un proveedor</option>
+          {% for prov in proveedores %}
+          <option value="{{ prov.nombre }}">{{ prov.nombre }} ({{ prov.correo }})</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="input-group">
+        <label for="codigoPedido">Código de pedido</label>
+        <input type="text" id="codigoPedido" name="codigo_pedido" placeholder="Ej: OC-2025-001" required />
+      </div>
+      <div class="input-group">
+        <label for="descripcionPedido">Descripción (producto)</label>
+        <input type="text" id="descripcionPedido" name="descripcion" placeholder="Ej: Pija Para Acero" required />
+      </div>
+      <div class="input-group">
+        <label for="tamanoPedido">Tamaño/Medida</label>
+        <input type="text" id="tamanoPedido" name="medida" placeholder="Ej: 1/4'' x 4' x 8'" required />
+      </div>
+      <div class="input-group">
+        <label for="cantidadPedido">Cantidad</label>
+        <input type="number" id="cantidadPedido" name="cantidad" min="1" placeholder="Ej: 100" required />
+      </div>
+      <button type="submit" class="btn" style="grid-column:1/-1;">
+        <i class="fas fa-plus-circle"></i> Agregar línea
+      </button>
+    </form>
+  </div>
+
+<form method="get" action="{{ url_for('pedidos_proveedores') }}" style="margin: 16px 0;">
+  <label for="f_estado">Filtrar por estado:</label>
+  <select id="f_estado" name="estado">
+    {% set estados = ['', 'pendiente','confirmado','enviado','recibido','cancelado'] %}
+    {% for e in estados %}
+      <option value="{{ e }}" {% if filtro_estado==e %}selected{% endif %}>
+        {{ 'Todos' if e=='' else e|capitalize }}
+      </option>
+    {% endfor %}
+  </select>
+  <button type="submit" class="btn" style="margin-left:8px;">Aplicar</button>
+</form>
+
+
+  <h3 style="margin-top:24px; text-align:center;">Pedidos registrados</h3>
+  <table id="tablaPedidosProv">
+  <thead>
+  <tr>
+    <th>Proveedor</th>
+    <th>Código</th>
+    <th>Descripción</th>
+    <th>Tamaño</th>
+    <th>Cantidad</th>
+    <th>Estado</th>
+    <th>Últ. cambio</th>
+  </tr>
+</thead>
+<tbody>
+  {% for p in pedidos %}
+  <tr class="estado-{{ p.estado|default('pendiente') }}">
+    <td>{{ p.proveedor }}</td>
+    <td>{{ p.codigo_pedido }}</td>
+    <td>{{ p.descripcion }}</td>
+    <td>{{ p.medida or '' }}</td>
+    <td>{{ p.cantidad }}</td>
+
+    <td>
+      <form method="post"
+            action="{{ url_for('actualizar_estado_pedprov', pedido_id=p.id_pedidop) }}?ref={{ request.full_path|urlencode }}"
+            style="display:flex; gap:6px; align-items:center;">
+        <select name="estado" {% if rol not in ['admin','empleado'] %}disabled{% endif %}>
+          {% set estados = ['pendiente','confirmado','enviado','recibido','cancelado'] %}
+          {% for e in estados %}
+            <option value="{{ e }}" {% if p.estado==e %}selected{% endif %}>{{ e|capitalize }}</option>
+          {% endfor %}
+        </select>
+        {% if rol in ['admin','empleado'] %}
+          <button type="submit" class="btn">Guardar</button>
+        {% endif %}
+      </form>
+    </td>
+
+    <td>
+      {% if p.fecha_estado %}
+        {{ p.fecha_estado.strftime('%Y-%m-%d %H:%M') }}
+      {% else %}
+        -
+      {% endif %}
+    </td>
+  </tr>
+  {% else %}
+  <tr><td colspan="7" style="text-align:center; color:#666;">Sin pedidos de proveedores.</td></tr>
+  {% endfor %}
+</tbody>
+
+  </table>
+
+  <div style="display:flex; justify-content:space-between; margin-top:20px;">
+    <button class="btn" onclick="window.location.href='{{ url_for('menu') }}'">
+      <i class="fas fa-arrow-left"></i> Volver al menú
+    </button>
+    <button class="btn" onclick="window.location.href='{{ url_for('proveedores') }}'">
+      <i class="fas fa-truck"></i> Ir a Proveedores
+    </button>
+  </div>
+
+  <style>
+  .estado-pendiente  { background: rgba(128,128,128,.06); }
+  .estado-confirmado { background: rgba(0,123,255,.06); }
+  .estado-enviado    { background: rgba(255,193,7,.10); }
+  .estado-recibido   { background: rgba(40,167,69,.10); }
+  .estado-cancelado  { background: rgba(220,53,69,.10); }
+</style>
+
+</div>
+{% endblock %}
