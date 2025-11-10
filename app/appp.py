@@ -22,41 +22,31 @@ app.secret_key = "clave_secreta_segura"
 def obtener_conexion():
     import socket, os
     import mysql.connector
+    from urllib.parse import urlparse
 
-    host_env = os.getenv("MYSQLHOST", os.getenv("DB_HOST", "127.0.0.1")).strip()
-    port_env = os.getenv("MYSQLPORT", os.getenv("DB_PORT", "3306")).strip()
-    user = os.getenv("MYSQLUSER", os.getenv("DB_USER", "root")).strip()
-    password = os.getenv("MYSQLPASSWORD", os.getenv("DB_PASS", "")).strip()
-    database = os.getenv("MYSQLDATABASE", os.getenv("DB_NAME", "")).strip()
+    mysql_url = os.getenv("MYSQL_URL")
+    if mysql_url:
+        try:
+            parsed = urlparse(mysql_url)
+            config = {
+                'host': parsed.hostname,
+                'user': parsed.username,
+                'password': parsed.password,
+                'database': parsed.path[1:],
+                'port': parsed.port or 3306,
+                'ssl_disabled': True
+            }
+            conn = mysql.connector.connect(**config)
+            print("✅ Conexión exitosa via MYSQL_URL")
+            return conn
+        except Exception as e:
+            print(f"❌ Error con MYSQL_URL: {e}")
 
-    try:
-        port = int(port_env)
-    except:
-        port = 3306
-
-    try:
-        resolved_ip = socket.gethostbyname(host_env)
-    except Exception:
-        resolved_ip = host_env
-
-    print(f"[DB] env host={host_env} -> resolved_ip={resolved_ip} port={port} user={user} db={database}")
-
-    try:
-        conn = mysql.connector.connect(
-            host=resolved_ip,
-            port=port,
-            user=user,
-            password=password,
-            database=database,
-            ssl_disabled=True,
-            connection_timeout=8,
-            use_pure=True,
-        )
-        print(f"✅ Conexión establecida con {resolved_ip}:{port}, DB={database}")
-        return conn
-    except mysql.connector.Error as e:
-        print(f"❌ db error: {e}, intentado={resolved_ip}:{port} (env host={host_env}) user={user} db={database}")
-        raise
+    host_env = os.getenv("DB_HOST", "127.0.0.1").strip()
+    port_env = os.getenv("DB_PORT", "3306").strip()
+    user = os.getenv("DB_USER", "root").strip()
+    password = os.getenv("DB_PASS", "").strip()
+    database = os.getenv("DB_NAME", "").strip()
 
 @app.route("/health")
 def health():
