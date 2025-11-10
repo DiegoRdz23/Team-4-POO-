@@ -16,18 +16,22 @@ from reportlab.lib.units import cm
 from reportlab.pdfgen import canvas
 
 import os
-from urllib.parse import urlparse
 import mysql.connector
 
 def obtener_conexion():
-    url = urlparse(os.getenv("DATABASE_URL"))
+    host = os.environ.get("DB_HOST", "127.0.0.1")      # host público de Railway (NO mysql.railway.internal)
+    user = os.environ.get("DB_USER", "root")
+    password = os.environ.get("DB_PASS", "")
+    database = os.environ.get("DB_NAME", "empresa")
+    port = int(os.environ.get("DB_PORT", "3306"))
+
     return mysql.connector.connect(
-        host=url.hostname,
-        port=url.port,
-        user=url.username,
-        password=url.password,
-        database=url.path[1:],  
-        autocommit=True
+        host=host,
+        user=user,
+        password=password,
+        database=database,
+        port=port,
+        connection_timeout=10,
     )
 
 app = Flask(__name__, template_folder="templates", static_folder="static")
