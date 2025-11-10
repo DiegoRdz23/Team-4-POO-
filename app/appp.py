@@ -41,6 +41,17 @@ def obtener_conexion():
         print(f"❌ db error: {e}, host={host}, port={port}, user={user}, db={database}")
         raise
 
+import os
+@app.route("/debug_vars")
+def debug_vars():
+    return {
+        "DB_HOST": os.getenv("DB_HOST"),
+        "DB_PORT": os.getenv("DB_PORT"),
+        "DB_USER": os.getenv("DB_USER"),
+        "DB_PASS": "****" if os.getenv("DB_PASS") else None,
+        "DB_NAME": os.getenv("DB_NAME")
+    }
+
 app = Flask(__name__, template_folder="templates", static_folder="static")
 app.secret_key = "clave_secreta_segura"
 
